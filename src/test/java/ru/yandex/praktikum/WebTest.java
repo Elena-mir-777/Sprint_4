@@ -1,30 +1,20 @@
 package ru.yandex.praktikum;
 
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
-import static org.junit.Assert.assertEquals;
 
 @RunWith(Parameterized.class)
 public class WebTest {
     private WebDriver driver;
-    private static final String PAGE_URL = "https://qa-scooter.praktikum-services.ru/";
-    private static final By BLOCK_LIST_OF_QUESTION = By.xpath(".//*[@class = 'Home_FourPart__1uthg']");
-    private final int questionNumber; // номер вопроса в  выпадающем списке
-    private final String expectedText; // текст вопроса ОР
-    private final String answerText; // текст ответа ОР
+    private final int questionNumber;
+    private final String expectedText;
+    private final String answerText;
 
     public WebTest(int questionNumber, String expectedText, String answerText) {
         this.questionNumber = questionNumber;
@@ -53,50 +43,11 @@ public class WebTest {
                 {7, "Я жизу за МКАДом, привезёте?", "Да, обязательно. Всем самокатов! И Москве, и Московской области."},
         };
     }
-
-
     @Before
     public void setUp() {
         driver = new ChromeDriver();
         //driver = new FirefoxDriver();
     }
-
-    @Test // при клике на  вопрос в блоке "Вопросы о важном" открывается ответ
-    public void checkClickListOfQuestions() {
-        driver.get(PAGE_URL);
-        WebElement element = driver.findElement(BLOCK_LIST_OF_QUESTION);
-        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();", element);
-        WebDriverWait wait = new WebDriverWait(driver, 3);
-        wait.until(ExpectedConditions.elementToBeClickable(BLOCK_LIST_OF_QUESTION));// явное ожидание
-
-        driver.findElement(By.id("accordion__heading-" + questionNumber)).click();
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("accordion__panel-" + questionNumber)));
-        boolean isDisplayed = driver.findElement(By.id("accordion__panel-" + questionNumber)).isDisplayed();
-        Assert.assertTrue(isDisplayed);
-
-        String actualTextQuestion = driver.findElement(By.id("accordion__heading-" + questionNumber)).getText();
-        assertEquals("Текст вопроса ошибочный", expectedText, actualTextQuestion);
-
-        String actualTextanswer = driver.findElement(By.id("accordion__panel-" + questionNumber)).getText();
-        assertEquals("Текст ответа ошибочный", answerText, actualTextanswer);
-
-    }
-
-    @Test // текст ответа соответствует вопросу в блоке "Вопросы о важном"
-    public void compareTextQuestionsAndAnswersInBlockListOfQuestion() {
-        driver.get(PAGE_URL);
-        WebElement element = driver.findElement(BLOCK_LIST_OF_QUESTION);
-        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();", element);
-        WebDriverWait wait = new WebDriverWait(driver, 10);
-        wait.until(ExpectedConditions.elementToBeClickable(BLOCK_LIST_OF_QUESTION));// явное ожидание
-
-        driver.findElement(By.id("accordion__heading-" + questionNumber)).click();
-        String actualTextQuestion = driver.findElement(By.id("accordion__heading-" + questionNumber)).getText();
-        assertEquals("Текст вопроса ошибочный", expectedText, actualTextQuestion);
-        String actualTextanswer = driver.findElement(By.id("accordion__panel-" + questionNumber)).getText();
-        assertEquals("Текст ответа ошибочный", answerText, actualTextanswer);
-    }
-
     @Test //with POM - при клике на вопрос в блоке "Вопросы о важном" открывается  соответствующий ответ
     public void clickListOfQuestions_withPOM() {
         MainPage page = new MainPage(driver, questionNumber, expectedText, answerText);
@@ -106,7 +57,6 @@ public class WebTest {
         page.compareTextQuestionsInBlockListOfQuestion();
         page.compareTextAnswersInBlockListOfQuestion();
     }
-
     @After
     public void cleanUp() {
         driver.quit();

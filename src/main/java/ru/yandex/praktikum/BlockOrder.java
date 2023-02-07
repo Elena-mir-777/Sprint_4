@@ -10,6 +10,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class BlockOrder {
+    private final WebDriver driver;
     private static final String PAGE_URL = "https://qa-scooter.praktikum-services.ru/";
     // Кнопка "Заказать" в шапке главной страницы
     private static final By ORDER_HEADER_BUTTON = By.xpath(".//*[@id='root']/div/div/div[1]/div[2]/button[1]");
@@ -37,7 +38,6 @@ public class BlockOrder {
     private static final By BLOCK_ORDER_CONFIRMATION = By.xpath(".//*[(@class='Order_ModalHeader__3FDaJ') and (text()='Хотите оформить заказ?')]");
     private static final By YES_BUTTON = By.cssSelector("div > div.Order_Content__bmtHS > div.Order_Modal__YZ-d3 > div.Order_Buttons__1xGrp > button:nth-child(2)");
     private static final By BLOCK_ORDER_HAS_BEEN_PLASED = By.xpath(".//*[(@class = 'Order_Text__2broi') and (text()='Номер заказа: ')]");
-    private WebDriver driver;
     private final int numberOrderButton;
     private final String name;
     private final String surname;
@@ -63,11 +63,9 @@ public class BlockOrder {
         this.comment = comment;
         this.driver = driver;
     }
-
     public void open() {
         driver.get(PAGE_URL);
     }
-
     public void selectButton() {
         if (numberOrderButton == 0) {
             driver.findElement(ORDER_HEADER_BUTTON).click();
@@ -78,7 +76,6 @@ public class BlockOrder {
             driver.findElement(ORDER_MIDDLE_BUTTON_MAINPAGE).click();
         }
     }
-
     //Блок "Для кого самокат"
     public void waitOrderContentBlock() {
         new WebDriverWait(driver, 10).
@@ -86,25 +83,21 @@ public class BlockOrder {
         boolean blockOrderContent = driver.findElement(BLOCK_ORDER_CONTENT).isDisplayed();
         Assert.assertTrue("Ошибка", blockOrderContent);
     }
-
     public void fillNameField() {
         WebElement nameField = driver.findElement(NAME_FIELD_ENTER);
         nameField.clear();
         nameField.sendKeys(name);
     }
-
     public void fillSurnameField() {
         WebElement surnameField = driver.findElement(SURNAME_FIELD_ENTER);
         surnameField.clear();
         surnameField.sendKeys(surname);
     }
-
     public void fillAddressField() {
         WebElement addressField = driver.findElement(ADDRESS_FIELD_ENTER);
         addressField.clear();
         addressField.sendKeys(address);
     }
-
     public void fillMetroStationField() {
         WebElement metroStationField = driver.findElement(METRO_STATION_FIELD_ENTER);
         metroStationField.clear();
@@ -114,18 +107,15 @@ public class BlockOrder {
                 until(ExpectedConditions.visibilityOfElementLocated(METRO_STATION_LIST));
         driver.findElement(By.xpath(".//*[text()='" + metroStation + "']")).click();
     }
-
     public void fillTelephoneField() {
         WebElement telephoneField = driver.findElement(TELEPHONE_FIELD_ENTER);
         telephoneField.clear();
         telephoneField.click();
         telephoneField.sendKeys(telephone);
     }
-
     public void clickNext() {
         driver.findElement(NEXT_BUTTON).click();
     }
-
     // Блок "Про аренду"
     public void waitBlockAboutRent() {
         new WebDriverWait(driver, 10).
@@ -133,7 +123,6 @@ public class BlockOrder {
         boolean blockAboutRent = driver.findElement(BLOCK_ABOUT_RENT).isDisplayed();
         Assert.assertTrue("Ошибка", blockAboutRent);
     }
-
     public void fillDataField() {
         WebElement dataField = driver.findElement(DATA_FIELD_ENTER);
         dataField.clear();
@@ -142,7 +131,6 @@ public class BlockOrder {
                 until(ExpectedConditions.visibilityOfElementLocated(CALENDAR));
         driver.findElement(By.xpath(".//*[text()='" + data + "']")).click();
     }
-
     public void fillDurationField() {
         WebElement durationField = driver.findElement(DURATION_ARROW_ENTER);
         durationField.click();
@@ -150,40 +138,33 @@ public class BlockOrder {
                 until(ExpectedConditions.visibilityOfElementLocated(DURATION_LIST_ENTER));
         driver.findElement(By.xpath(".//*[text()='" + duration + "']")).click();
     }
-
     public void fillCheckColorField() {
         WebElement checkcolor = driver.findElement(By.xpath(".//*[@class='Order_Title__3EKne']"));
         checkcolor.click();
         driver.findElement(By.id(color)).click();
     }
-
     public void fillCommentField() {
         WebElement commentField = driver.findElement(COMMENT_FIELD_ENTER);
         commentField.clear();
         commentField.click();
         commentField.sendKeys(comment);
     }
-
     public void clickOrderMiddleButton() {
         driver.findElement(ORDER_MIDDLE_BUTTON).click();
     }
-
     public void waitBlockOrderConfirmation() {
         new WebDriverWait(driver, 10).
                 until(ExpectedConditions.visibilityOfElementLocated(BLOCK_ORDER_CONFIRMATION));
         boolean blockOrderConfirmation = driver.findElement(BLOCK_ORDER_CONFIRMATION).isDisplayed();
         Assert.assertTrue("Ошибка", blockOrderConfirmation);
     }
-
     public void clickYes() {
         driver.findElement(YES_BUTTON).click();
     }
-
     public void waitBlockOrderHasBeenPlased() {
         new WebDriverWait(driver, 10).
                 until(ExpectedConditions.visibilityOfElementLocated(BLOCK_ORDER_HAS_BEEN_PLASED));
         boolean blockOrderHasBeenPlased = driver.findElement(BLOCK_ORDER_HAS_BEEN_PLASED).isDisplayed();
         Assert.assertTrue("Ошибка", blockOrderHasBeenPlased);
     }
-
 }

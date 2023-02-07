@@ -1,15 +1,13 @@
 package ru.yandex.praktikum;
 
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.firefox.FirefoxDriver;
 
 @RunWith(Parameterized.class)
 public class OrderingScooterTest {
@@ -24,34 +22,6 @@ public class OrderingScooterTest {
     private final String duration;
     private final String color;
     private final String comment;
-
-    private static final String PAGE_URL = "https://qa-scooter.praktikum-services.ru/";
-    // Кнопка "Заказать" в шапке главной страницы
-    private static final By ORDER_HEADER_BUTTON = By.xpath(".//*[@id='root']/div/div/div[1]/div[2]/button[1]");
-    // Кнопка "Заказать" в середине главной страницы
-    private static final By ORDER_MIDDLE_BUTTON_MAINPAGE = By.xpath(".//*[@id='root']/div/div[1]/div[4]/div[2]/div[5]/button");
-    // Блок "Для кого самокат"
-    private static final By BLOCK_ORDER_CONTENT = By.xpath(".//*[@class = 'Order_Content__bmtHS']");
-    private static final By NAME_FIELD_ENTER = By.cssSelector("div.Order_Form__17u6u > div:nth-child(1) > input");
-    private static final By SURNAME_FIELD_ENTER = By.cssSelector("div.Order_Form__17u6u > div:nth-child(2) > input");
-    private static final By ADDRESS_FIELD_ENTER = By.cssSelector("div.Order_Form__17u6u > div:nth-child(3) > input");
-    private static final By METRO_STATION_FIELD_ENTER = By.cssSelector("div.Order_Form__17u6u > div:nth-child(4) > div > div > input");
-    private static final By METRO_STATION_LIST = By.cssSelector("div.select-search__select");
-    private static final By TELEPHONE_FIELD_ENTER = By.cssSelector("div.Order_Form__17u6u > div:nth-child(5) > input");
-    private static final By NEXT_BUTTON = By.xpath(".//*[@class='Button_Button__ra12g Button_Middle__1CSJM']");
-    // Блок "Про аренду"
-    private static final By BLOCK_ABOUT_RENT = By.xpath(".//*[@id='root']/div/div[2]");
-    private static final By DATA_FIELD_ENTER = By.cssSelector("div.react-datepicker-wrapper > div > input");
-    private static final By CALENDAR = By.xpath(".//*[@class='react-datepicker']");
-    private static final By DURATION_ARROW_ENTER = By.cssSelector("div > div.Order_Content__bmtHS > div.Order_Form__17u6u > div.Dropdown-root");
-    private static final By DURATION_LIST_ENTER = By.cssSelector("div.Dropdown-menu > div:nth-child(2)");
-
-    private static final By COMMENT_FIELD_ENTER = By.cssSelector("div.Order_Form__17u6u > div.Input_InputContainer__3NykH > input");
-
-    private static final By ORDER_MIDDLE_BUTTON = By.cssSelector("div.Order_Content__bmtHS > div.Order_Buttons__1xGrp > button:nth-child(2)");
-    private static final By BLOCK_ORDER_CONFIRMATION = By.xpath(".//*[(@class='Order_ModalHeader__3FDaJ') and (text()='Хотите оформить заказ?')]");
-    private static final By YES_BUTTON = By.cssSelector("div > div.Order_Content__bmtHS > div.Order_Modal__YZ-d3 > div.Order_Buttons__1xGrp > button:nth-child(2)");
-    private static final By BLOCK_ORDER_HAS_BEEN_PLASED = By.xpath(".//*[(@class = 'Order_Text__2broi') and (text()='Номер заказа: ')]");
 
     public OrderingScooterTest(int numberOrderButton, String name, String surname, String address, String metroStation,
                                String telephone, int data, String duration, String color, String comment) {
@@ -74,104 +44,11 @@ public class OrderingScooterTest {
 
         };
     }
-
     @Before
     public void setUp() {
         driver = new ChromeDriver();
         //driver = new FirefoxDriver();
     }
-
-    @Test // Заказ самоката - позитивный сценарий
-    public void orderingScooterPositive() {
-        driver.get(PAGE_URL);
-
-        if (numberOrderButton == 0) {
-            driver.findElement(ORDER_HEADER_BUTTON).click();
-        } else {
-            driver.findElement(By.xpath(".//*[@id='rcc-confirm-button']")).click();// кнопка куки
-            WebElement element = driver.findElement(ORDER_MIDDLE_BUTTON_MAINPAGE);
-            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();", element);
-            driver.findElement(ORDER_MIDDLE_BUTTON_MAINPAGE).click();
-        }
-
-        new WebDriverWait(driver, 10).
-                until(ExpectedConditions.visibilityOfElementLocated(BLOCK_ORDER_CONTENT));// явное ожидание
-        boolean blockOrderContent = driver.findElement(BLOCK_ORDER_CONTENT).isDisplayed();
-        Assert.assertTrue("Ошибка", blockOrderContent);
-
-        // Заполнение блока "Для кого самокат"
-        WebElement nameField = driver.findElement(NAME_FIELD_ENTER);
-        nameField.clear();
-        nameField.sendKeys(name);
-
-        WebElement surnameField = driver.findElement(SURNAME_FIELD_ENTER);
-        surnameField.clear();
-        surnameField.sendKeys(surname);
-
-        WebElement addressField = driver.findElement(ADDRESS_FIELD_ENTER);
-        addressField.clear();
-        addressField.sendKeys(address);
-
-        WebElement metroStationField = driver.findElement(METRO_STATION_FIELD_ENTER);
-        metroStationField.clear();
-        metroStationField.click();
-        metroStationField.sendKeys(metroStation);
-        new WebDriverWait(driver, 10).
-                until(ExpectedConditions.visibilityOfElementLocated(METRO_STATION_LIST));
-        driver.findElement(By.xpath(".//*[text()='" + metroStation + "']")).click();
-
-        WebElement telephoneField = driver.findElement(TELEPHONE_FIELD_ENTER);
-        telephoneField.clear();
-        telephoneField.click();
-        telephoneField.sendKeys(telephone);
-
-        driver.findElement(NEXT_BUTTON).click();
-
-
-        // Блок про аренду
-        new WebDriverWait(driver, 10).
-                until(ExpectedConditions.visibilityOfElementLocated(BLOCK_ABOUT_RENT));// явное ожидание
-        boolean blockAboutRent = driver.findElement(BLOCK_ABOUT_RENT).isDisplayed();
-        Assert.assertTrue("Ошибка", blockAboutRent);
-
-        WebElement dataField = driver.findElement(DATA_FIELD_ENTER);
-        dataField.clear();
-        dataField.click();
-        new WebDriverWait(driver, 10).
-                until(ExpectedConditions.visibilityOfElementLocated(CALENDAR));
-        driver.findElement(By.xpath(".//*[text()='" + data + "']")).click();
-
-        WebElement durationField = driver.findElement(DURATION_ARROW_ENTER);
-        durationField.click();
-        new WebDriverWait(driver, 10).
-                until(ExpectedConditions.visibilityOfElementLocated(DURATION_LIST_ENTER));
-        driver.findElement(By.xpath(".//*[text()='" + duration + "']")).click();
-
-        WebElement checkcolor = driver.findElement(By.xpath(".//*[@class='Order_Title__3EKne']"));
-        checkcolor.click();
-        driver.findElement(By.id(color)).click();
-
-        WebElement commentField = driver.findElement(COMMENT_FIELD_ENTER);
-        commentField.clear();
-        commentField.click();
-        commentField.sendKeys(comment);
-
-
-        driver.findElement(ORDER_MIDDLE_BUTTON).click();
-
-        new WebDriverWait(driver, 10).
-                until(ExpectedConditions.visibilityOfElementLocated(BLOCK_ORDER_CONFIRMATION));
-        boolean blockOrderConfirmation = driver.findElement(BLOCK_ORDER_CONFIRMATION).isDisplayed();
-        Assert.assertTrue("Ошибка", blockOrderConfirmation);
-
-        driver.findElement(YES_BUTTON).click();
-
-        new WebDriverWait(driver, 10).
-                until(ExpectedConditions.visibilityOfElementLocated(BLOCK_ORDER_HAS_BEEN_PLASED));
-        boolean blockOrderHasBeenPlased = driver.findElement(BLOCK_ORDER_HAS_BEEN_PLASED).isDisplayed();
-        Assert.assertTrue("Ошибка", blockOrderHasBeenPlased);
-    }
-
     @Test // with POM Заказ самоката - позитивный сценарий
     public void orderingScooterPositive_withPom() {
         BlockOrder blockOrder = new BlockOrder(numberOrderButton, name, surname, address, metroStation, telephone, data, duration, color, comment, driver);
@@ -196,7 +73,6 @@ public class OrderingScooterTest {
         blockOrder.clickYes();
         blockOrder.waitBlockOrderHasBeenPlased();
     }
-
     @After
     public void cleanUp() {
         driver.quit();
